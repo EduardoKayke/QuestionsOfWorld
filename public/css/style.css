@@ -1,0 +1,11 @@
+body {
+    background-color: #ECEFF1;
+}
+
+.logo {
+    width: 200px;
+}
+
+#formulario-pergunta {
+    margin-top: 5vh;
+}
