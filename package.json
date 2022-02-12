@@ -1,5 +1,5 @@
 {
-  "name": "QuestionsOfWorld",
+  "name": "questionsofworld",
   "version": "1.0.0",
   "description": "Uma plataforma de perguntas e respostas estilo Yahoo Respostas",
   "main": "index.js",
