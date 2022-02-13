@@ -20,6 +20,7 @@ const bodyParser = require("body-parser");
 const connection = require("./database/database");
 //Importando o model de perguntas.
 const Perguntas = require("./database/Perguntas");
+const Respostas = require("./database/Respostas")
 // Database Essa estrutura é chamada Promises
 
 connection
@@ -56,13 +57,22 @@ app.use(bodyParser.json());
 // Observe o que foi feito na parte 1. 
 
 // ---------------------PARTE 4------------------------------
+
+//Página inicial.
 app.get("/", (requisition, response) => {
 
     //Method responsável por ver todos os dados da tabela.
     // Equivalente a SELECT * FROM Perguntas
     // raw: true = Para pegar só os dados que criamos
     // raw é cru. Ou seja, uma pesquisa crua.
-    Perguntas.findAll({raw: true}).then(perguntas => {
+    // Alterando a ordem dos itens apresentados do banco de dados
+    //order = DESC é decrescente
+    //order = ASC é crescente
+    // Podemos ordenar com o nome do campo da tabela.
+    // Poderiamos usar titulo, pois usamos no banco de dados.
+    Perguntas.findAll({raw: true, order:[
+        ['id', 'DESC']
+    ]}).then(perguntas => {
         response.render("index", {
             perguntas: perguntas,
         });// para mostrar as perguntas.
@@ -135,6 +145,7 @@ app.get("/", (requisition, response) => {
 
 });
 
+//Página onde pergunta.
 app.get("/perguntar", (requisition, response) => {
     response.render("perguntar");
 });
@@ -153,6 +164,8 @@ app.get("/perguntar", (requisition, response) => {
 // Para trabalhar junto com o MySQL precisa baixar um lib
 // Instalação por terminal, digite:
 // npm install --save mysql2
+
+// Salva a pergunta no banco de dados.
 app.post("/salvarpergunta", (requisition, response) => {
 
     var titulo = requisition.body.titulo;
@@ -168,6 +181,47 @@ app.post("/salvarpergunta", (requisition, response) => {
         response.redirect("/");
         //Redirecionando o user para a pág principal após
         // enviar a pergunta.
+    });
+});
+
+//Página da pergunta.
+app.get("/pergunta/:id", (requisition, response) => {
+    var id = requisition.params.id;
+    Perguntas.findOne({
+        where:{
+            id: id,
+        }
+    }).then(pergunta => {
+        if(pergunta != undefined){ // Pergunta encontrada
+
+            Respostas.findAll({
+                where: {
+                    perguntaId: pergunta.id,
+                },
+                order:[ 
+                    ["id", "DESC"]
+                ],
+            }).then(respostas => {
+                response.render("pergunta", {
+                    pergunta: pergunta,
+                    respostas: respostas,
+                });
+            });
+        } else { // Pergunta não encontrada
+            response.redirect("/");
+        }
+    });
+});
+
+//Página de resposta.
+app.post("/responder", (requisition, response) => {
+    var corpo = requisition.body.corpo;
+    var perguntaId = requisition.body.pergunta;
+    Respostas.create({
+        corpo: corpo,
+        perguntaId: perguntaId
+    }).then(() => {
+        response.redirect(`/pergunta/${perguntaId}`);
     });
 });
 
