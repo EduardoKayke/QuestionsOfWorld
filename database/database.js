@@ -1,9 +1,9 @@
 // Vamos criar a conexão com Sequelize
-const sequelize = require("sequelize");
+const Sequelize = require("sequelize");
 //Aqui vai o nome do banco de dados pra conectar.
 const connection = new Sequelize('guiaperguntas', 'root', 'Ee@87654321', {
     host: 'localhost',
-    dialect: 'mysql'
+    dialect: 'mysql',
 });
 
 

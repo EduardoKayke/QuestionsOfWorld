@@ -1,6 +1,6 @@
-/** Instalações
+/** Instalações.
  *  Primeiro de tudo demos o comando:
- *  node init
+ *  npm init
  *  npm install express --save
  *  npm install ejs --save 
  * 
@@ -15,6 +15,21 @@ const express = require("express"); // Importei o módulo.
 const app = express(); // Cópia do Express na variável.
 const bodyParser = require("body-parser"); 
 // Body-Parser, e temos que configurar ali na PARTE 3
+
+//Vamos carregar a conexão com o banco de dados.
+const connection = require("./database/database");
+//Importando o model de perguntas.
+const Perguntas = require("./database/Perguntas");
+// Database Essa estrutura é chamada Promises
+
+connection
+    .authenticate()
+    .then(() => {
+        console.log("Conexão feita com o banco de dados!");
+    })
+    .catch((msgErro) => {
+        console.log(msgErro);
+    });
 
 // ---------------------PARTE 3------------------------------
 // Colocar o EJS no Express.
@@ -43,8 +58,18 @@ app.use(bodyParser.json());
 // ---------------------PARTE 4------------------------------
 app.get("/", (requisition, response) => {
 
+    //Method responsável por ver todos os dados da tabela.
+    // Equivalente a SELECT * FROM Perguntas
+    // raw: true = Para pegar só os dados que criamos
+    // raw é cru. Ou seja, uma pesquisa crua.
+    Perguntas.findAll({raw: true}).then(perguntas => {
+        response.render("index", {
+            perguntas: perguntas,
+        });// para mostrar as perguntas.
+    });// pesquisando no banco, mandando os dados pra variável
+       // e renderizando no front-end com o render.
 
-    response.render("index");
+    
 
 
 
@@ -119,6 +144,7 @@ app.get("/perguntar", (requisition, response) => {
 // npm install body-parser --save
 // Agora temos que colocar em uma constante. Suba até o topo
 // desse arquivo e veja a importação do body-parser.
+// body-parser vem do express.js
 // O Body-parser é responsável pelo body utilizado aqui.
 // objeto body que usamos pra pegar o nome dos inputs no html
 // Vamos instalar o Sequelize para usar o MySQL
@@ -128,9 +154,21 @@ app.get("/perguntar", (requisition, response) => {
 // Instalação por terminal, digite:
 // npm install --save mysql2
 app.post("/salvarpergunta", (requisition, response) => {
+
     var titulo = requisition.body.titulo;
     var descricao = requisition.body.descricao;
-    response.send(`Formulário recebido. Título: ${titulo} Descrição: ${descricao}`);
+
+    // Salva a pergunta no banco de dados
+    // Isso é o equivalente ao código SQL
+    // insert into perguntas (informações)...
+    Perguntas.create({
+        titulo: titulo,
+        descricao: descricao,
+    }).then(() => {
+        response.redirect("/");
+        //Redirecionando o user para a pág principal após
+        // enviar a pergunta.
+    });
 });
 
 // ---------------------PARTE 2------------------------------
