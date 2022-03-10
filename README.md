@@ -17,7 +17,7 @@ function QuestionsOfWorld(Project) {
 
 <div align="center">
 
-<img src="public/source/img/readme.png" alt="Questions Of World" width="800"/>
+<img src="Projeto/public/source/img/readme.png" alt="Questions Of World" width="800"/>
 
 </div>
 
