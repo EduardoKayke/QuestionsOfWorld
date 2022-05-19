@@ -3,7 +3,7 @@
 ## Sobre o projeto.
 Site de perguntas e respostas usando banco de dados. Com esse sistema é possível fazer perguntas e responder. Podendo visualizar tudo na página inicial.
 
-Data de conclusão: 23/02/2022
+Data de conclusão: 10/03/2022
 
 ## Ferramentas e tecnologias usadas nesse projeto.
 ```js    
